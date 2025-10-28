@@ -1,0 +1,49 @@
+# ------------------------------------
+# 1. Xcode
+# ------------------------------------
+
+## Build Products
+build/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+
+## Build Artifacts
+*.dSYM.zip
+*.dSYM
+*.app
+*.appex
+*.framework
+*.lo
+*.o
+*.obj
+*.so
+*.a
+*.dylib
+
+## Caches
+/Carthage/Build/
+/Pods/
+.swiftpm/
+
+# ------------------------------------
+# 2. Project File Details
+# ------------------------------------
+
+# User data (often contains local settings)
+*.xcodeproj/project.xcworkspace
+*.xcodeproj/xcshareddata/
+*.playground/
+
+# Swift Package Manager files
+.build/
+
+# ------------------------------------
+# 3. macOS Specific
+# ------------------------------------
+
+# Folder-specific metadata files
+.DS_Store
+
+# QuickLook files
+*.qlgenerator/
