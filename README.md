@@ -15,7 +15,7 @@ CryptoBar is a lightweight and user-friendly macOS menu bar application for trac
 - [License](#license)
 - [FAQ](#faq)
 - [Acknowledgments](#acknowledgments)
-- [App Interface](app-nterface)
+- [App Interface](#app-interface)
 
 ## Features
 --------
