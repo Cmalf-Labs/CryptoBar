@@ -47,7 +47,7 @@ CryptoBar is a lightweight and user-friendly macOS menu bar application for trac
 
 ### Recommended Method (Easy)
 
-1.  Go to the **[Latest Release](https://github.com/cmalf/CryptoBar/releases/latest)** page.
+1.  Go to the **[Latest Release](https://github.com/cmalf-labs/CryptoBar/releases/latest)** page.
 
 2.  Download the `CryptoBar-vX.X.X.dmg` file.
 
@@ -65,7 +65,7 @@ If you prefer to build the project yourself:
     Bash
 
     ```
-    git clone https://github.com/cmalf/CryptoBar.git
+    git clone https://github.com/cmalf-labs/CryptoBar.git
 
     ```
 
@@ -114,7 +114,7 @@ This project is open-source and Contributions, bug reports, and feature suggesti
 
 -  Fork this repo and create a pull request.
 
--  Please open an [issue](https://github.com/cmalf/CryptoBar/issues) to suggest enhancements or submit found bugs.
+-  Please open an [issue](https://github.com/cmalf-labs/CryptoBar/issues) to suggest enhancements or submit found bugs.
 
 -  All levels of contributors are encouraged to participate.
 
@@ -135,7 +135,7 @@ A: No. CryptoBar never tracks your activity or sends data to third parties.
 ## Acknowledgments
 ---------------
 
--   CryptoBar is developed and maintained by [cmalf.](https://github.com/cmalf)
+-   CryptoBar is developed and maintained by [cmalf.](https://github.com/cmalf-labs)
 
 -   Icon and UI are designed for a clean macOS experience.
 
