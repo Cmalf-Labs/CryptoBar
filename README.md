@@ -135,13 +135,15 @@ A: No. CryptoBar never tracks your activity or sends data to third parties.
 ## Acknowledgments
 ---------------
 
--   CryptoBar is developed and maintained by [cmalf.](https://github.com/cmalf-labs)
+-   CryptoBar is developed and maintained by [Cmalf-Labs.](https://github.com/cmalf-labs)
 
 -   Icon and UI are designed for a clean macOS experience.
 
 -   This project is open source and made with ❤️ for the crypto & Mac,Hack community.
 
--   Price data is sourced from [cryptobubbles.net](https://cryptobubbles.net/).
+-   Data is sourced from [cryptobubbles.net](https://cryptobubbles.net/).
+    > Price data: [cryptobubbles.net/Price](https://cryptobubbles.net/backend/data/bubbles1000.usd.json) <br>
+    > Charts data: [cryptobubbles.net/Charts](https://cryptobubbles.net/backend/data/charts/day/1/USD.json)
 
 ## App Interface
 --------
