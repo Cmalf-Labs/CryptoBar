@@ -1,5 +1,5 @@
 
-# <img width="64" height="64" alt="AppGlyphLarge" src="https://github.com/user-attachments/assets/97a33ec5-fcac-4538-bb95-477892316800" /> CryptoBar
+# <img width="64" height="64" alt="AppGlyphLarge" src="https://github.com/user-attachments/assets/9dcafecf-3eac-48d5-a1d5-9281712a8a85" /> CryptoBar
 
 CryptoBar is a lightweight and user-friendly macOS menu bar application for tracking real-time cryptocurrency prices. Designed for simplicity and efficiency, CryptoBar lives in your menu bar, giving you a quick, at-a-glance view of your favorite cryptocurrency prices without interrupting your workflow., with open-source transparency and a focus on privacy.
 
@@ -17,7 +17,8 @@ CryptoBar is a lightweight and user-friendly macOS menu bar application for trac
 - [Acknowledgments](#acknowledgments)
 - [App Interface](#app-interface)
 
-![InShot_20251106_160705507](https://github.com/user-attachments/assets/f30555fb-5f0d-4e48-be0b-8f2075febc6d)
+![CryptoBar-v1.1.0](https://github.com/user-attachments/assets/f30555fb-5f0d-4e48-be0b-8f2075febc6d) <br>
+[CryptoBar-v1.1.0](https://github.com/Cmalf-Labs/CryptoBar/releases/tag/1.1.0)
 
 
 ## Features
@@ -150,30 +151,32 @@ A: No. CryptoBar never tracks your activity or sends data to third parties.
 
 ## App Interface
 --------
+[CryptoBar-v1.0.0](https://github.com/Cmalf-Labs/CryptoBar/releases/tag/1.0.0)
+
 >   **Main Interface**
 <details>
   <summary>Click to view</summary>
-  <img src="https://github.com/user-attachments/assets/6ccd2bb5-fabd-4444-bf74-500fea310ad5" alt="Main Interface">
+  <img src="https://github.com/user-attachments/assets/fc88a5b2-7ee5-44f1-b4a9-df7d9d8a1c7e" alt="Main Interface">
 </details>
 
 >   **Settings**:  `General`,`Updates`,`About`
   
 <details>
   <summary>Click to view</summary>
-  <img src="https://github.com/user-attachments/assets/950a58a9-ad24-4762-a0e5-952cb1b26c34" alt="General">
+  <img src="https://github.com/user-attachments/assets/7b2cf42b-19da-441a-84eb-b49403150b0d" alt="General">
 </details>
 <details>
   <summary>Click to view</summary>
-  <img src="https://github.com/user-attachments/assets/5cace00c-ad76-45e5-a00b-2438d716cd7f" alt="Updates">
+  <img src="https://github.com/user-attachments/assets/90ee7ac5-4e2b-4f7d-b04c-e626e2bd90a7" alt="Updates">
 </details>
 <details>
   <summary>Click to view</summary>
-  <img src="https://github.com/user-attachments/assets/04b894ee-cfc5-4a1f-adbf-79f4d9535b3e" alt="About">
+  <img src="https://github.com/user-attachments/assets/ebc6e2fd-99f3-4b83-963b-37cd947bbd4f" alt="About">
 </details>
 
 >   **Support**
   
 <details>
   <summary>Click to view</summary>
-  <img src="https://github.com/user-attachments/assets/6b35600c-43bc-40cb-82bf-aab7edbef364" alt="Support">
+  <img src="https://github.com/user-attachments/assets/e72577e3-7a34-4ae4-a1fd-bed649b3efe2" alt="Support">
 </details>
