@@ -2,7 +2,7 @@
  * File: BubblesService.swift
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (C) 2025 CMALF
+ * Copyright (C) 2025 Cmalf-Labs
  *
  * This file is part of CryptoBar.
  *
@@ -28,7 +28,10 @@ enum BubblesService {
         let candidates = [
             URL(string: "https://cryptobubbles.net/backend/data/bubbles1000.\(vsLower).json")!,
             URL(string: "https://cryptobubbles.net/backend/data/bubbles1000.usd.json")!
-        ]
+        ].compactMap { $0 }
+        guard !candidates.isEmpty else {
+            throw NSError(domain: "Network", code: -2, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])
+        }
         var lastError: Error?
         for url in candidates {
             do {

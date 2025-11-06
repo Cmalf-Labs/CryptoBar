@@ -1,8 +1,8 @@
 /*
- * File: CryptoBarApp.swift
+ * File: BarTitle.swift
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (C) 2025 CMALF
+ * Copyright (C) 2025 Cmalf-Labs
  *
  * This file is part of CryptoBar.
  *
@@ -20,19 +20,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
+import Foundation
+import Combine
 
-@main
-struct CryptoBarApp: App {
-    
-    let barTitle = BarTitle()
-    let vm = CryptoViewModel()
-
-    init() {
-        StatusBarController.shared.configure(barTitle: barTitle, vm: vm)
-    }
-
-    var body: some Scene {
-        Settings { EmptyView() } // tidak membuat window reguler
-    }
+final class BarTitle: ObservableObject {
+    @Published var text: String = "CMALF-CryptoBar"
 }

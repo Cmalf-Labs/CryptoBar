@@ -2,7 +2,7 @@
  * File: Updater.swift
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (C) 2025 CMALF
+ * Copyright (C) 2025 Cmalf-Labs
  *
  * This file is part of CryptoBar.
  *

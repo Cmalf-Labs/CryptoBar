@@ -1,8 +1,8 @@
 /*
- * File: Models.swift
+ * File: BubblesModels.swift
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (C) 2025 CMALF
+ * Copyright (C) 2025 Cmalf-Labs
  *
  * This file is part of CryptoBar.
  *
@@ -22,10 +22,14 @@
 
 import Foundation
 
-struct PriceItem: Identifiable, Hashable {
-    let id: String          // cg_id
+struct BubbleItem: Decodable {
+    let cg_id: String
     let symbol: String      // e.g. "BTC"
-    let value: Double       // price in selected fiat
-    let changeDay: Double?  // 24h change for coloring
-    let logoURL: URL?       // https://cryptobubbles.net/backend/data/logos/1.png
+    let image: String       // e.g. "data/logos/1.png"
+    let price: Double
+    let performance: Performance?
+
+    struct Performance: Decodable {
+        let day: Double?
+    }
 }

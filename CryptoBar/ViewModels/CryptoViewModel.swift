@@ -2,7 +2,7 @@
  * File: CryptoViewModel.swift
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (C) 2025 CMALF
+ * Copyright (C) 2025 Cmalf-Labs
  *
  * This file is part of CryptoBar.
  *
@@ -111,7 +111,8 @@ final class CryptoViewModel: ObservableObject {
                     symbol: e.symbol,
                     value: e.price,
                     changeDay: e.performance?.day,
-                    logoURL: BubblesService.logoURL(from: e.image)
+                    logoURL: BubblesService.logoURL(from: e.image),
+                    cbNumId: extractCBNumId(from: e.image) // <— isi otomatis
                 )
             }
 
@@ -156,6 +157,23 @@ final class CryptoViewModel: ObservableObject {
         }
 
         return f.string(from: NSNumber(value: v)) ?? "\(v) \(vs.uppercased())"
+    }
+    
+    // MARK: Charts
+
+    private func extractCBNumId(from imagePath: String) -> Int? {
+        // contoh "data/logos/1.png" -> 1
+        let last = (imagePath as NSString).lastPathComponent // "1.png"
+        let noExt = (last as NSString).deletingPathExtension  // "1"
+        return Int(noExt)
+    }
+
+    func cbNumericId(for cgID: String) -> Int? {
+        // gunakan cache semua entri agar tetap sinkron dengan feed harga
+        if let e = allCache.first(where: { $0.cg_id.lowercased() == cgID.lowercased() }) {
+            return extractCBNumId(from: e.image)
+        }
+        return nil
     }
 
 }

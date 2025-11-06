@@ -1,8 +1,8 @@
 /*
- * File: BubblesModels.swift
+ * File: CryptoBarApp.swift
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (C) 2025 CMALF
+ * Copyright (C) 2025 Cmalf-Labs
  *
  * This file is part of CryptoBar.
  *
@@ -20,16 +20,19 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import Foundation
+import SwiftUI
 
-struct BubbleItem: Decodable {
-    let cg_id: String
-    let symbol: String      // e.g. "BTC"
-    let image: String       // e.g. "data/logos/1.png"
-    let price: Double
-    let performance: Performance?
+@main
+struct CryptoBarApp: App {
+    
+    let barTitle = BarTitle()
+    let vm = CryptoViewModel()
 
-    struct Performance: Decodable {
-        let day: Double?
+    init() {
+        StatusBarController.shared.configure(barTitle: barTitle, vm: vm)
+    }
+
+    var body: some Scene {
+        Settings { EmptyView() }
     }
 }

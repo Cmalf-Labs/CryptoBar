@@ -1,8 +1,8 @@
 /*
- * File: BarTitle.swift
+ * File: Notifications.swift
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
- * Copyright (C) 2025 CMALF
+ * Copyright (C) 2025 Cmalf-Labs
  *
  * This file is part of CryptoBar.
  *
@@ -21,8 +21,10 @@
  */
 
 import Foundation
-import Combine
 
-final class BarTitle: ObservableObject {
-    @Published var text: String = "CMALF-CryptoBar"
+extension NSNotification.Name {
+    static let openChartsAux   = NSNotification.Name("openChartsAux")
+    static let openSupportAux  = NSNotification.Name("openSupportAux")
+    static let openSettingsAux = NSNotification.Name("openSettingsAux")
 }
+
