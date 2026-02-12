@@ -1,5 +1,9 @@
 
 # <img width="64" height="64" alt="AppGlyphLarge" src="https://github.com/user-attachments/assets/9dcafecf-3eac-48d5-a1d5-9281712a8a85" /> CryptoBar
+<div align=center 
+  
+![cryptobar](https://github.com/user-attachments/assets/78cc0817-9a7d-4295-b250-ab74dda83de3)
+<div align=left 
 
 CryptoBar is a lightweight and user-friendly macOS menu bar application for tracking real-time cryptocurrency prices. Designed for simplicity and efficiency, CryptoBar lives in your menu bar, giving you a quick, at-a-glance view of your favorite cryptocurrency prices without interrupting your workflow., with open-source transparency and a focus on privacy.
 
