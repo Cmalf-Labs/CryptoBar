@@ -45,7 +45,7 @@ struct SettingsViewStandalone: View {
 
     // Updates
     @AppStorage("autoCheckUpdates") private var autoCheckUpdates = true
-    @AppStorage("autoDownloadUpdates") private var autoDownloadUpdates = false
+    @AppStorage("autoDownloadUpdates") private var autoDownloadUpdates = true
     @AppStorage("lastCheckTS") private var lastCheckTS: Double = 0
     @AppStorage("updateIntervalChoice") private var updateIntervalChoice: String = "Monthly"
     
@@ -149,13 +149,17 @@ struct SettingsViewStandalone: View {
                     InfoPanel {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("INFO:").font(.caption2).fontWeight(.semibold)
-                            Text("• Coins: symbol or cg_id, Max: 30")
+                            Text("• Coins: symbol or cg_id, Max: 100")
                                 .font(.caption2).foregroundStyle(.secondary)
                             Text("• Only Coins Rank 1–1000 (coingecko)")
                                 .font(.caption2).foregroundStyle(.secondary)
                             Text("• First ticker will appear on the menu bar")
                                 .font(.caption2).foregroundStyle(.secondary)
                             Text("• Simply enter the coin's ticker, press enter, or click the add button")
+                                .font(.caption2).foregroundStyle(.secondary)
+                            Text("• Type to see suggestions, click one to add it")
+                                .font(.caption2).foregroundStyle(.secondary)
+                            Text("• Drag chips to reorder — the first coin shows in the menu bar")
                                 .font(.caption2).foregroundStyle(.secondary)
                         }
                     }
@@ -227,12 +231,25 @@ struct SettingsViewStandalone: View {
                     // Apply Button & launchAtLogin SMa
                     HStack {
                         VStack(alignment: .leading, spacing: 12) {
-                            Toggle(isOn: $launchAtLogin) {
+                            Toggle(isOn: Binding(
+                                get: { launchAtLogin },
+                                set: { newValue in
+                                    launchAtLogin = newValue
+                                    applyLaunchAtLogin(newValue)
+                                }
+                            )) {
                                 Label("Launch at login", systemImage: "power.circle.fill")
                                     .font(.headline)
                             }
                             .toggleStyle(.switch)
                             .tint(.green)
+                            .onAppear {
+                                // Selaraskan toggle dengan status login item yang sebenarnya
+                                // (bisa berubah dari System Settings di luar app).
+                                if #available(macOS 13.0, *) {
+                                    launchAtLogin = (SMAppService.mainApp.status == .enabled)
+                                }
+                            }
                         }
                         Spacer()
                         Button(action: {
@@ -272,6 +289,24 @@ struct SettingsViewStandalone: View {
         case "daily":   return !cal.isDateInToday(last)
         case "weekly":  return (cal.dateComponents([.day], from: last, to: Date()).day ?? 0) >= 7
         default:        return (cal.dateComponents([.day], from: last, to: Date()).day ?? 0) >= 30
+        }
+    }
+
+    // MARK: - Launch at login (SMAppService)
+    // Sebelumnya toggle ini hanya membalik Bool di UserDefaults tanpa pernah
+    // memanggil register()/unregister() — jadi setting-nya tidak berpengaruh.
+    private func applyLaunchAtLogin(_ enabled: Bool) {
+        guard #available(macOS 13.0, *) else { return }
+        do {
+            if enabled {
+                try SMAppService.mainApp.register()
+            } else {
+                try SMAppService.mainApp.unregister()
+            }
+        } catch {
+            // Gagal (mis. app belum diletakkan di /Applications atau belum
+            // signed) — kembalikan toggle ke status sebenarnya supaya tidak menipu.
+            launchAtLogin = (SMAppService.mainApp.status == .enabled)
         }
     }
     
@@ -539,8 +574,8 @@ struct SettingsViewStandalone: View {
                             Image(systemName: "person.circle.fill").foregroundStyle(.green)
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Publisher").font(.caption).foregroundStyle(.secondary)
-                                Text("Panca").font(.subheadline).fontWeight(.medium)
-                                Text("panca.rad@icloud.com").font(.caption).foregroundStyle(.secondary)
+                                Text("Cmalf").font(.subheadline).fontWeight(.medium)
+                                Text("xcmalf@gmail.com").font(.caption).foregroundStyle(.secondary)
                             }
                         }
                     }

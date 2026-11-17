@@ -36,7 +36,7 @@ struct SupportViewStandalone: View {
     
     @State private var binanceId: String = "96771283"
     @State private var bybitNote: String = "117943952"
-    @State private var solanaAddr: String = "SoLMyRa3FGfjSD8ie6bsXK4g4q8ghSZ4E6HQzXhyNGG"
+    @State private var solanaAddr: String = "CMALF2xvsZPE6ygTnQgj25pCjdDryewYJWXpRw4fqfM3"
     @State private var evmAddr: String = "0xbeD69b650fDdB6FBB528B0fF7a15C24DcAd87FC4"
     @State private var copied = false   // <- state toast copy
     

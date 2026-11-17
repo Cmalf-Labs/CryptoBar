@@ -47,3 +47,10 @@ DerivedData/
 
 # QuickLook files
 *.qlgenerator/
+
+# ------------------------------------
+# 4. CryptoBar fix backups
+# ------------------------------------
+
+# Folder backup dari apply-fix.sh (.backup-v1.1.1-<tanggal>) — jangan di-commit
+.backup-*/

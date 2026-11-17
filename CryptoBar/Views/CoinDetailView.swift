@@ -88,6 +88,13 @@ struct CoinDetailView: View {
     @FocusState private var focused: Field?
     private enum Field { case coin, fiat }
 
+    // Price alert (one-shot) untuk koin ini
+    @ObservedObject private var alertStore = PriceAlertStore.shared
+    @State private var alertTarget = ""
+    @State private var alertDirection: PriceAlert.Direction = .above
+    @State private var directionTouched = false
+    @State private var notificationsOff = false
+
     init(coinNumId: Int, symbol: String, coinName: String, logoURL: URL?, fiat: String, initialPrice: Double?, changeDay: Double? = nil) {
         _vm = StateObject(wrappedValue: CoinDetailVM(coinNumId: coinNumId, symbol: symbol, fiat: fiat))
         self.coinName = coinName
@@ -117,6 +124,10 @@ struct CoinDetailView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
 
+            alertSection
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+
             stats
                 .padding(.horizontal, 16)
                 .padding(.top, 12)
@@ -138,6 +149,8 @@ struct CoinDetailView: View {
             await vm.loadAll()
             recalcFromCoin()
             focused = .coin
+            prefillAlert()
+            notificationsOff = await !PriceAlertStore.shared.notificationsAllowed()
         }
         .task(id: vm.range) { await vm.loadChart() }
     }
@@ -199,6 +212,98 @@ extension CoinDetailView {
                 .onChangeCompat(of: fiatAmount) { _ in if focused == .fiat { recalcFromFiat() } }
             }
         }
+    }
+
+    // MARK: - Price Alert (one-shot)
+
+    private var alertSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label("Price Alert", systemImage: "bell")
+                .font(.headline)
+
+            if let existing = alertStore.alert(for: vm.symbol) {
+                HStack {
+                    Image(systemName: "bell.fill").foregroundStyle(.orange)
+                    Text("\(existing.direction == .above ? "Above" : "Below") \(appVM.formatCurrency(existing.target, vs: existing.fiat, forceDecimals: true))")
+                        .font(.subheadline.weight(.semibold))
+                    Spacer()
+                    Button("Remove") {
+                        alertStore.removeAlert(for: vm.symbol)
+                        alertTarget = ""
+                        directionTouched = false
+                        alertDirection = .above
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                }
+            }
+
+            HStack(spacing: 8) {
+                TextField("Target price", text: $alertTarget)
+                    .textFieldStyle(.roundedBorder)
+                    .onChangeCompat(of: alertTarget) { _ in
+                        // Arah default mengikuti target vs harga sekarang,
+                        // sampai user mengubah picker secara manual
+                        if !directionTouched,
+                           let t = parseCleanDecimal(alertTarget),
+                           let price = effectivePrice {
+                            alertDirection = (t as NSDecimalNumber).doubleValue > price ? .above : .below
+                        }
+                    }
+                Picker("", selection: $alertDirection) {
+                    Text("Above").tag(PriceAlert.Direction.above)
+                    Text("Below").tag(PriceAlert.Direction.below)
+                }
+                .pickerStyle(.segmented)
+                .frame(width: 150)
+                .onChangeCompat(of: alertDirection) { _ in directionTouched = true }
+                Button(alertStore.alert(for: vm.symbol) == nil ? "Set alert" : "Update") {
+                    setAlert()
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.small)
+                .disabled(parseCleanDecimal(alertTarget) == nil)
+            }
+
+            Text("One-shot: the alert fires once when the price crosses the target, then it is removed.")
+                .font(.caption).foregroundStyle(.secondary)
+            if notificationsOff {
+                Text("Notifications are off — enable them in System Settings → Notifications → CryptoBar to get alerted.")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private func setAlert() {
+        guard let d = parseCleanDecimal(alertTarget) else { return }
+        let target = (d as NSDecimalNumber).doubleValue
+        guard target > 0 else { return }
+        let direction: PriceAlert.Direction = directionTouched
+            ? alertDirection
+            : (target > (effectivePrice ?? 0) ? .above : .below)
+        alertStore.setAlert(symbol: vm.symbol, coinName: coinName,
+                            target: target, direction: direction, fiat: vm.fiat)
+        alertDirection = direction
+        directionTouched = true
+        Task { notificationsOff = await !PriceAlertStore.shared.notificationsAllowed() }
+    }
+
+    private func prefillAlert() {
+        if let existing = alertStore.alert(for: vm.symbol) {
+            alertTarget = plainNumber(existing.target)
+            alertDirection = existing.direction
+            directionTouched = true
+        }
+    }
+
+    private func plainNumber(_ v: Double) -> String {
+        let f = NumberFormatter()
+        f.numberStyle = .decimal
+        f.maximumFractionDigits = 8
+        f.minimumFractionDigits = 0
+        f.groupingSeparator = ""
+        f.decimalSeparator = "."
+        return f.string(from: NSNumber(value: v)) ?? ""
     }
 
     private var stats: some View {
@@ -347,12 +452,12 @@ extension CoinDetailView {
         
         guard let c = parseCleanDecimal(coinAmount) else {
             // Jika input tidak valid (misal kosong), set fiat ke "0"
-            fiatAmount = appVM.formatCurrency(0, vs: appVM.vs)
+            fiatAmount = appVM.formatCurrency(0, vs: appVM.vs, forceDecimals: true)
             return
         }
         
         let fiatValue = (c as NSDecimalNumber).multiplying(by: NSDecimalNumber(value: price))
-        fiatAmount = appVM.formatCurrency(fiatValue.doubleValue, vs: appVM.vs)
+        fiatAmount = appVM.formatCurrency(fiatValue.doubleValue, vs: appVM.vs, forceDecimals: true)
     }
 
     private func recalcFromFiat() {

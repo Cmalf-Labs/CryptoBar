@@ -23,6 +23,14 @@
 import SwiftUI
 import AppKit
 
+// NSPanel tanpa title bar tidak bisa jadi key window secara default,
+// padahal TextField butuh key window supaya bisa diklik dan diketik.
+// Subclass kecil ini mengizinkannya: panel tetap muncul tanpa
+// mengaktifkan app, tapi bisa jadi key begitu diklik.
+private final class KeyablePanel: NSPanel {
+    override var canBecomeKey: Bool { true }
+}
+
 final class EdgePanel: NSWindowController {
     static let shared = EdgePanel()
 
@@ -53,7 +61,7 @@ final class EdgePanel: NSWindowController {
 
     // Panel 1 (main)
     private lazy var panel: NSPanel = {
-        let p = NSPanel(contentRect: .zero, styleMask: [.borderless], backing: .buffered, defer: false)
+        let p = KeyablePanel(contentRect: .zero, styleMask: [.borderless], backing: .buffered, defer: false)
         p.level = .floating
         p.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         p.isOpaque = false
@@ -109,6 +117,13 @@ final class EdgePanel: NSWindowController {
         let title: String
         let symbol: String?
         @ViewBuilder var content: Content
+
+        // Rentang tahun copyright: 2025 (tahun pembuatan) sampai tahun berjalan
+        private var copyrightYears: String {
+            let year = Calendar.current.component(.year, from: Date())
+            return year <= 2025 ? "2025" : "2025–\(year)"
+        }
+
         var body: some View {
             VStack(spacing: 0) {
                 ZStack {
@@ -134,7 +149,7 @@ final class EdgePanel: NSWindowController {
 
                 VStack(spacing: 4) {
                     Divider()
-                    Text("© 2025 Cmalf-Labs. All rights reserved.")
+                    Text("© \(copyrightYears) Cmalf-Labs. All rights reserved.")
                         .font(.caption2).foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity).padding(.vertical, 4)
                 }

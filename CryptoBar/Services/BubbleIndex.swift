@@ -36,19 +36,25 @@ actor BubbleIndex {
     func load(vs: String) async throws -> [BubbleIndexEntry] {
         if let last, Date().timeIntervalSince(last) < 3600, !mem.isEmpty { return mem }
         let items = try await BubblesService.fetchAll(vs: vs)   // service eksisting
-        var seen = Set<String>()
+        var seenIds = Set<String>()
         let entries: [BubbleIndexEntry] = items.compactMap { it in
             let id = it.cg_id.lowercased()
             let sym = it.symbol.lowercased()
-            let k = sym + "|" + id
-            if seen.contains(k) { return nil }
-            seen.insert(k)
+            // Feed bisa berisi cg_id dobel dengan simbol berbeda (mis. "mantra"
+            // dan "om" sama-sama cg_id "mantra") — simpan yang pertama saja.
+            // Kalau lolos, Dictionary di CoinsCompactSelector akan fatalError
+            // duplicate key dan app force-close saat Settings dibuka.
+            if seenIds.contains(id) { return nil }
+            seenIds.insert(id)
             return BubbleIndexEntry(id: id, symbol: sym)
         }
-        mem = entries
+        // Feed sekarang berisi 1200 koin, tapi index hanya rank 1–1000
+        // (sesuai teks INFO di Settings). Urutan feed = urutan rank.
+        let capped = Array(entries.prefix(1000))
+        mem = capped
         last = Date()
-        try Self.persist(entries)
-        return entries
+        try Self.persist(capped)
+        return capped
     }
 
     // MARK: - File helpers (nonisolated & static)
@@ -71,6 +77,7 @@ actor BubbleIndex {
         guard let dir = try? supportURL() else { return [] }
         let file = dir.appendingPathComponent("bubble_index.json")
         guard let data = try? Data(contentsOf: file) else { return [] }
-        return (try? JSONDecoder().decode([BubbleIndexEntry].self, from: data)) ?? []
+        // Cache lama bisa berisi 1200 entri — pangkas juga ke rank 1–1000
+        return Array(((try? JSONDecoder().decode([BubbleIndexEntry].self, from: data)) ?? []).prefix(1000))
     }
 }

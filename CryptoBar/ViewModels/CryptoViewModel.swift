@@ -29,11 +29,13 @@ final class CryptoViewModel: ObservableObject {
     @AppStorage("coinIDsCSV") var coinIDsCSV: String = "btc,eth,xrp,bnb,sol,doge,tron,ada"
     @AppStorage("vs") var vs: String = "usd"
     @AppStorage("interval") var interval: Int = 30
+    @AppStorage("coinListMode") var coinListMode: String = "watcher"  // "watcher" | "all" | "categories"
 
     // Fiat yang didukung (mengikuti daftar di CryptoBubbles Settings)
     let supportedFiat: [String] = ["usd","eur","gbp","brl","cad","aud","pln","inr","rub","chf","zar","try","jpy","krw"]
 
     @Published var items: [PriceItem] = []
+    @Published var allItems: [PriceItem] = []   // rank 1–1200, untuk mode All Coins & Categories
     @Published var isLoading = false
     @Published var errorMessage: String?
 
@@ -83,8 +85,8 @@ final class CryptoViewModel: ObservableObject {
                 result.append(t.lowercased())
             }
         }
-        // Batasi maksimal 30 coin
-        return Array(result.prefix(30))
+        // Batasi maksimal 100 coin
+        return Array(result.prefix(100))
     }
 
     func refresh(barTitle: BarTitle) async {
@@ -106,14 +108,13 @@ final class CryptoViewModel: ObservableObject {
 
             // Map ke PriceItem untuk UI
             self.items = filtered.map { e in
-                PriceItem(
-                    id: e.cg_id,
-                    symbol: e.symbol,
-                    value: e.price,
-                    changeDay: e.performance?.day,
-                    logoURL: BubblesService.logoURL(from: e.image),
-                    cbNumId: extractCBNumId(from: e.image) // <— isi otomatis
-                )
+                priceItem(from: e)
+            }
+
+            // Semua koin rank 1–1200 untuk mode All Coins
+            // (feed sudah urut rank, jadi 1200 pertama = rank 1–1200)
+            self.allItems = Array(all.prefix(1200)).map { e in
+                priceItem(from: e)
             }
 
             // Label menubar: pakai symbol, mis. "BTC-USD $110,497"
@@ -127,13 +128,57 @@ final class CryptoViewModel: ObservableObject {
             } else {
                 barTitle.text = "CMALF-CryptoBar"
             }
+
+            // Price alert: cek tiap refresh, bunyi sekali kalau harga melewati target
+            PriceAlertStore.shared.checkAndNotify(items: self.items.map { ($0.symbol, $0.value) })
+
             errorMessage = nil
         } catch {
             errorMessage = error.localizedDescription
         }
     }
 
-    func formatCurrency(_ v: Double, vs: String) -> String {
+    private func priceItem(from e: BubbleItem) -> PriceItem {
+        PriceItem(
+            id: e.cg_id,
+            symbol: e.symbol,
+            value: e.price,
+            changeDay: e.performance?.day,
+            logoURL: BubblesService.logoURL(from: e.image),
+            cbNumId: extractCBNumId(from: e.image) // <— isi otomatis
+        )
+    }
+
+    // Tambah koin ke daftar pantauan (tombol Add to watcher di mode All Coins).
+    // false kalau koin sudah ada di pantauan atau pantauan sudah penuh 100.
+    func addToWatcher(symbol: String) -> Bool {
+        let sym = symbol.lowercased()
+        var tokens = coinIDsCSV.split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }
+            .filter { !$0.isEmpty }
+        guard !tokens.contains(sym), tokens.count < 100 else { return false }
+        tokens.append(sym)
+        coinIDsCSV = tokens.joined(separator: ",")
+        return true
+    }
+
+    // Hapus koin dari pantauan (tombol − di mode Watcher).
+    // Kalau koin yang dihapus adalah koin pertama, ticker menu bar
+    // otomatis pindah ke koin pertama berikutnya saat refresh.
+    func removeFromWatcher(symbol: String) -> Bool {
+        let sym = symbol.lowercased()
+        var tokens = coinIDsCSV.split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }
+            .filter { !$0.isEmpty }
+        guard tokens.contains(sym) else { return false }
+        tokens.removeAll { $0 == sym }
+        coinIDsCSV = tokens.joined(separator: ",")
+        return true
+    }
+
+    // forceDecimals: tampilkan desimal meski USD >= 1 (dipakai Converter,
+    // supaya nilai kecil seperti US$1.91 tidak dibulatkan jadi US$2)
+    func formatCurrency(_ v: Double, vs: String, forceDecimals: Bool = false) -> String {
         let f = NumberFormatter()
         f.numberStyle = .currency
         f.currencyCode = vs.uppercased()
@@ -151,7 +196,7 @@ final class CryptoViewModel: ObservableObject {
         }
 
         // Beberapa fiat seperti usd bisa tanpa desimal; override jika ingin paksa 0 desimal:
-        if vs.lowercased() == "usd" && v >= 1 {
+        if vs.lowercased() == "usd" && v >= 1 && !forceDecimals {
             f.maximumFractionDigits = 0
             f.minimumFractionDigits = 0
         }
